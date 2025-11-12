@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <title>Notatnik - CloudPatch</title>
+  <link rel="icon" type="image/png" href="notatnik.png">
+  <style>
+    :root {
+      --bg: #f3f9ff;
+      --primary: #0a2540;
+      --secondary: #2d5c8a;
+      --white: #ffffff;
+      --shadow: 0 8px 20px rgba(0,0,0,0.1);
+      --gradient: linear-gradient(to right, #2d5c8a, #0a2540);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background: var(--bg);
+      margin: 0;
+      padding: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      color: var(--primary);
+    }
+
+    .container {
+      display: flex;
+      gap: 30px;
+      width: 100%;
+      max-width: 1200px;
+    }
+
+    .left-panel, .right-panel {
+      flex: 1;
+      background: var(--white);
+      border-radius: 15px;
+      box-shadow: var(--shadow);
+      padding: 25px 30px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    h2 {
+      text-align: center;
+      margin-top: 0;
+      margin-bottom: 25px;
+    }
+
+    .field-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .field-row label {
+      font-weight: 600;
+      min-width: 160px;
+    }
+
+    input, textarea {
+      flex: 1;
+      padding: 8px 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: inherit;
+    }
+
+    textarea {
+      resize: none;
+      height: 120px;
+    }
+
+    .copy-btn {
+      background: var(--gradient);
+      color: #fff;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: 0.2s;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .actions button {
+      flex: 1;
+      background: var(--gradient);
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      font-weight: 600;
+      transition: 0.3s;
+    }
+
+    #summary {
+      flex: 1;
+      height: 360px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background: #f9f9f9;
+      font-family: monospace;
+      white-space: pre-wrap;
+    }
+
+    .summary-label-copy {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .clickable {
+      color: #2d5c8a;
+      text-decoration: underline;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .clickable:hover {
+      text-decoration: none;
+    }
+
+    #vip-info {
+      color: red;
+      font-weight: bold;
+      text-align: center;
+      width: 100%;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- 🔹 LEWA STRONA -->
+    <div class="left-panel">
+      <h2>Notatka</h2>
+
+      <div class="field-row" style="flex-direction: column; align-items: flex-start;">
+        <div style="display: flex; align-items: center; width: 100%; gap: 8px;">
+          <label>
+            <span class="clickable" onclick="copySeries()">Seria</span> i 
+            <span class="clickable" onclick="copyNumber()">numer</span> polisy:
+          </label>
+          <input type="text" id="polisa" oninput="checkVipPolisa()" style="flex: 1;">
+          <button class="copy-btn" onclick="copyPolisa()">Kopiuj</button>
+        </div>
+        <div id="vip-info" style="display:none;">To polisa VIP</div>
+      </div>
+
+      <div class="field-row">
+        <label for="imie">Imię:</label>
+        <input id="imie" type="text">
+        <button class="copy-btn" onclick="copyToClipboard('imie')">Kopiuj</button>
+      </div>
+
+      <div class="field-row">
+        <label for="nazwisko">Nazwisko:</label>
+        <input id="nazwisko" type="text">
+        <button class="copy-btn" onclick="copyToClipboard('nazwisko')">Kopiuj</button>
+      </div>
+
+      <div class="field-row">
+        <label for="pesel">PESEL:</label>
+        <input id="pesel" type="text">
+        <button class="copy-btn" onclick="copyToClipboard('pesel')">Kopiuj</button>
+      </div>
+
+      <div class="field-row">
+        <label for="zgloszenie">Numer zgłoszenia:</label>
+        <input id="zgloszenie" type="text">
+        <button class="copy-btn" onclick="copyToClipboard('zgloszenie')">Kopiuj</button>
+      </div>
+
+      <div class="field-row" style="align-items: flex-start;">
+        <label for="notatki">Pozostałe notatki:</label>
+        <textarea id="notatki"></textarea>
+        <button class="copy-btn" style="height: 120px;" onclick="copyToClipboard('notatki')">Kopiuj</button>
+      </div>
+
+      <div class="actions">
+        <button onclick="clearFields()">Wyczyść notatkę</button>
+        <button onclick="appendToSummary()">Dodaj do notatki zbiorczej</button>
+      </div>
+    </div>
+
+    <!-- 🔹 PRAWA STRONA -->
+    <div class="right-panel">
+      <div class="summary-label-copy">
+        <h2>Zbiorcza notatka</h2>
+        <button class="copy-btn" onclick="copyToClipboard('summary')">Kopiuj całość</button>
+      </div>
+      <textarea id="summary" readonly></textarea>
+    </div>
+
+  </div>
+
+  <script>
+    const vipPoliciesBase = [
+      "NG0014864","NG0037047","NG0028058","NG0043790","NG0043803",
+      "NG0043806","NG0043805","NG0028045","NG0038635","NG0032785",
+      "NK0010296","NG0024196","EP0008394","EP0008397","EP0008398",
+      "EP0008399","EP0008400","EP0008401","EP0008403","EP0008404",
+      "EP0008405","NG0024214","NG0029808","NG0029815","NG0029816",
+      "NG0030385","NG0030432","NG0030438","NG0030439","NG0030440",
+      "NG0030441","NG0030443","NG0030590","NG0030592"
+    ];
+
+    // 🌟 NOWA FUNKCJA normalizePolisa
+    function normalizePolisa(input) {
+      if (!input) return "";
+      const cleaned = input.replace(/\s+/g, '').toUpperCase();
+      
+      // jeśli pierwsze 2 znaki nie są literami, zostaw bez zmian
+      if (!/^[A-Z]{2}/.test(cleaned)) {
+        return cleaned;
+      }
+
+      const prefix = cleaned.match(/[A-Z]+/)?.[0] || '';
+      const digits = cleaned.match(/\d+/)?.[0] || '';
+      const normalizedNumber = digits ? String(parseInt(digits, 10)).padStart(7, '0') : '';
+      return prefix + normalizedNumber;
+    }
+
+    function splitPolisa(input) {
+      const formatted = normalizePolisa(input);
+      const match = formatted.match(/^([A-Z]+)(\d{7})$/);
+      return match ? { series: match[1], number: match[2] } : { series: '', number: '' };
+    }
+
+    function copyPolisa() {
+      const inputEl = document.getElementById('polisa');
+      const formatted = normalizePolisa(inputEl.value);
+      inputEl.value = formatted;
+      navigator.clipboard.writeText(formatted);
+      checkVipPolisa();
+    }
+
+    function copySeries() {
+      const inputEl = document.getElementById('polisa');
+      const { series } = splitPolisa(inputEl.value);
+      if (series) {
+        const formatted = normalizePolisa(inputEl.value);
+        inputEl.value = formatted;
+        navigator.clipboard.writeText(series);
+        checkVipPolisa();
+      }
+    }
+
+    function copyNumber() {
+      const inputEl = document.getElementById('polisa');
+      const { number } = splitPolisa(inputEl.value);
+      if (number) {
+        const formatted = normalizePolisa(inputEl.value);
+        inputEl.value = formatted;
+        navigator.clipboard.writeText(number);
+        checkVipPolisa();
+      }
+    }
+
+    function isVipPolisa(raw) {
+      return vipPoliciesBase.includes(normalizePolisa(raw));
+    }
+
+    function checkVipPolisa() {
+      const polisa = document.getElementById('polisa').value;
+      const vip = document.getElementById('vip-info');
+      vip.style.display = isVipPolisa(polisa) ? 'block' : 'none';
+    }
+
+    function copyToClipboard(id) {
+      const el = document.getElementById(id);
+      navigator.clipboard.writeText(el.value || el.innerText);
+    }
+
+    function clearFields() {
+      ['polisa','imie','nazwisko','pesel','zgloszenie','notatki'].forEach(id => {
+        document.getElementById(id).value = '';
+      });
+      checkVipPolisa();
+    }
+
+    function appendToSummary() {
+      const now = new Date().toLocaleString();
+      const polisa = normalizePolisa(document.getElementById('polisa').value);
+      const isVip = isVipPolisa(polisa);
+      const { series, number } = splitPolisa(polisa);
+
+      const data = `[${now}]
+Seria: ${series}
+Numer: ${number}
+VIP: ${isVip ? "TAK" : "NIE"}
+Imię: ${document.getElementById('imie').value}
+Nazwisko: ${document.getElementById('nazwisko').value}
+PESEL: ${document.getElementById('pesel').value}
+Zgłoszenie: ${document.getElementById('zgloszenie').value}
+Notatki: ${document.getElementById('notatki').value}
+--------------------------
+`;
+
+      const summary = document.getElementById('summary');
+      summary.value += data;
+    }
+  </script>
+</body>
+</html>
