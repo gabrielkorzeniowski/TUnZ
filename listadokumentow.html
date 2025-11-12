@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<title>Dokumenty do świadczenia</title>
+<link rel="icon" type="image/png" href="list.png">
+<style>
+:root {
+    --bg: #f3f9ff;
+    --primary: #0a2540;
+    --secondary: #2d5c8a;
+    --white: #ffffff;
+    --shadow: 0 8px 20px rgba(0,0,0,0.1);
+    --gradient: linear-gradient(to right, #2d5c8a, #0a2540);
+}
+
+* { box-sizing: border-box; }
+
+body {
+    font-family: "Segoe UI", sans-serif;
+    background: var(--bg);
+    margin: 0;
+    padding: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    color: var(--primary);
+}
+
+.container {
+    display: flex;
+    gap: 30px;
+    width: 100%;
+    max-width: 1200px;
+    flex-wrap: wrap;
+}
+
+.left-panel, .right-panel {
+    flex: 1;
+    background: var(--white);
+    border-radius: 15px;
+    box-shadow: var(--shadow);
+    padding: 25px 30px;
+    display: flex;
+    flex-direction: column;
+}
+
+h2, h3 {
+    margin-top: 0;
+    color: var(--primary);
+}
+
+h2 { text-align: center; margin-bottom: 25px; }
+h3 { font-size: 1.3rem; margin-bottom: 15px; color: var(--secondary); }
+
+label {
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: block;
+    color: var(--primary);
+}
+
+select {
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+    border-radius: 8px;
+    border: 1.5px solid #ccc;
+    margin-bottom: 18px;
+    cursor: pointer;
+    background: #fff;
+    transition: 0.2s;
+}
+
+select:focus {
+    outline: none;
+    border-color: var(--secondary);
+    box-shadow: 0 0 10px rgba(45,92,138,0.2);
+}
+
+#documentsContainer {
+    margin-top: 20px;
+    background: #e8f0ff;
+    padding: 18px 22px;
+    border-radius: 10px;
+    border: 1px solid #c1d3f0;
+}
+
+#documentsContainer ul {
+    margin: 12px 0 15px 20px;
+    line-height: 1.5;
+    font-size: 0.97rem;
+}
+
+#documentsContainer li { margin-bottom: 6px; }
+
+#documentsContainer h4 {
+    font-weight: 500;
+    font-size: 0.87rem;
+    color: #555;
+    margin: 0;
+    border-top: 1px solid #c1d3f0;
+    padding-top: 10px;
+    font-style: italic;
+}
+
+.copy-btn {
+    background: var(--gradient);
+    color: #fff;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.2s;
+    margin-top: 5px;
+}
+
+.submission-note {
+    background: #fff8e8;
+    border: 1px solid #f0d9b5;
+    border-radius: 12px;
+    padding: 20px;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.hidden { display: none; }
+
+@media (max-width: 768px) {
+    .container { flex-direction: column; gap: 20px; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+    <!-- 🔹 LEWY PANEL: formularz dokumentów -->
+    <div class="left-panel">
+        <h2>Dokumenty wymagane do zgłoszenia świadczenia</h2>
+
+        <label for="mainCategory">Wybierz kategorię główną:</label>
+        <select id="mainCategory">
+            <option value="">-- Wybierz kategorię --</option>
+        </select>
+
+        <label for="subCategory" id="subCategoryLabel" class="hidden">Wybierz podkategorię:</label>
+        <select id="subCategory" class="hidden">
+            <option value="">-- Wybierz podkategorię --</option>
+        </select>
+
+        <div id="documentsContainer" class="hidden">
+            <h3>Wymagane dokumenty:</h3>
+            <ul id="documentsList"></ul>
+            <h4>Dokumenty należy przesłać na adres TUnŻ Warta S.A. Skrytka Pocztowa nr 1013, 00-950 Warszawa 1</h4>
+        </div>
+    </div>
+
+    <!-- 🔹 PRAWY PANEL: stała notatka -->
+    <div class="right-panel">
+        <h2>Sposób zgłoszenia</h2>
+        <div class="submission-note">
+            Wnioski i dokumenty należy przesyłać pocztą tradycyjną lub drogą elektroniczną, zgodnie z wytycznymi OWU. Dokumenty powinny być kompletne i czytelne, w przypadku przesyłania skanów – w formacie PDF lub JPG.
+        </div>
+    </div>
+</div>
+
+<script>
+const data = {
+  "URODZENIE": {
+    "URODZENIE DZIECKA": ["Odpis skrócony aktu urodzenia", "Kopia dokumentu tożsamości osoby uprawnionej"],
+    "URODZENIE DZIECKA Z NISKĄ SKALĄ APGAR": ["Odpis skrócony aktu urodzenia", "Kopia dokumentu tożsamości osoby uprawnionej", "Dokument medyczny potwierdzający skalę Apgar"],
+    "URODZENIE DZIECKA Z WADĄ WRODZONĄ": ["Odpis skrócony aktu urodzenia", "Kopia dokumentu tożsamości osoby uprawnionej", "Dokumentacja medyczna potwierdzająca wadę wrodzoną dziecka"],
+    "URODZENIE MARTWEGO DZIECKA": ["Odpis skrócony aktu urodzenia lub aktu zgonu z adnotacją urzędową: (dziecko martwo urodzone)", "Kopia dokumentu tożsamości osoby uprawnionej"],
+    "URODZENIE WNUKA": ["Odpis skrócony aktu urodzenia wnuka", "Kopia dokumentu tożsamości osoby uprawnionej", "Dokument potwierdzający pokrewieństwo pomiędzy rodzicem dziecka, a ubezpieczonym"]
+  },
+  "ŚMIERĆ": {
+    "ŚMIERĆ UBEZPIECZONEGO": ["Odpis skrócony aktu zgonu", "Kopia dokumentu tożsamości osoby uprawnionej", "Dokument potwierdzający przyczynę i okoliczności zgonu ubezpieczonego (np. karta zgonu, dokumentacja medyczna, wynik sekcji zwłok, dokumenty z policji/prokuratury)"],
+    "ŚMIERĆ MAŁŻONKA/PARTNERA": ["Odpis skrócony aktu zgonu", "Kopia dokumentu tożsamości osoby uprawnionej", "Dokument potwierdzający przyczynę i okoliczności zgonu (np. karta zgonu, dokumentacja medyczna, wynik sekcji zwłok, dokumenty z policji/prokuratury)"],
+    "ŚMIERĆ DZIECKA": ["Odpis skrócony aktu zgonu", "Kopia dokumentu tożsamości osoby uprawnionej", "Dokumenty, z których wynikają okoliczności i przyczyna zgonu (np. karta zgonu, dokumentacja lekarska, wynik sekcji zwłok )"],
+    "ŚMIERĆ RODZICÓW UBEZPIECZONEGO": ["Odpis skrócony aktu zgonu", "Kopia dokumentu tożsamości osoby uprawnionej", "Dokument potwierdzający pokrewieństwo np.: akt urodzenia/małżeństwa z danymi rodzica", "Jeśli zdarzenie dotyczy zgonu ojczyma lub macochy konieczny jest odpis skrócony aktu zgonu biologicznego rodzica ubezpieczonego"],
+    "ŚMIERĆ RODZICÓW MAŁŻONKA/PARTNERA": ["Odpis skrócony aktu zgonu", "Kopia dokumentu tożsamości osoby uprawnionej", "Dokument wskazujący powinowactwo ubezpieczonego/małżonka/partnera z osobą zmarłą", "Jeśli zdarzenie dotyczy zgonu ojczyma lub macochy konieczny jest odpis skrócony aktu zgonu biologicznego rodzica małżonka/partnera"],
+    "OSIEROCENIE DZIECKA PO ŚMIERCI UBEZPIECZONEGO": ["Odpis skrócony aktu zgonu ubezpieczonego", "Skrócony odpis aktu urodzenia dziecka", "Kopia dokumentu tożsamości osoby uprawnionej (pełnoletniego dziecka lub opiekuna prawnego niepełnoletniego dziecka)", "Dokument potwierdzający przyczynę i okoliczności zgonu (np. karta zgonu, dokumentacja medyczna, wynik sekcji zwłok, dokumenty z policji/prokuratury)", "Dane kontaktowe opiekuna prawnego w przypadku niepełnoletniego dziecka", "Dodatkowe dokumenty/informacje – w zależności od okoliczności i zapisów OWU:", "Zaświadczenie o uczęszczaniu do szkoły/pobieraniu nauki, jeżeli dziecko jest w wieku od 18 do 25 roku życia", "Oświadczenie dziecka w wieku 18-25 lat, uczęszczającego do szkoły o nie podejmowaniu pracy zarobkowej", "Orzeczenie sądu ustanawiające prawnego opiekuna nieletniego dziecka w przypadku pozbawienia władzy rodzicielskiej lub gdy rodzice nie żyją", "Zaświadczenie o trwałej niezdolności do pracy", "Orzeczenie sądu stwierdzające fakt przysposobienia dziecka przez zmarłego ubezpieczonego", "Dokument potwierdzający zmianę nazwiska dziecka np. skrócony odpis aktu małżeństwa"],
+    "ŚMIERĆ NOWORODKA": ["Odpis skrócony aktu zgonu lub odpis skrócony aktu urodzenia z adnotacją urzędową: „dziecko martwo urodzone” – w przypadku noworodka poczętego lecz nienarodzonego", "Kopia dokumentu tożsamości osoby uprawnionej", "Dokumenty, z których wynikają okoliczności i przyczyna zgonu noworodka (np. karta zgonu, dokumentacja lekarska, wynik sekcji zwłok, dokumenty z prokuratury) – w przypadku noworodka, który przyszedł na świat żywy i nie ukończył 1 roku życia", "Dodatkowe dokumenty/informacje – w zależności od zapisów OWU:", "Zaświadczenie lekarskie lub inny dokument zawierający informacje, w którym tygodniu ciąży nastąpił zgon noworodka – w przypadku noworodka poczętego lecz nienarodzonego"]
+  },
+  "INWALIDZTWO": {
+    "INWALIDZTWO CAŁKOWITE LUB CZĘŚCIOWE": ["Dokument o przyznaniu renty lub orzeczenie lekarza/ZUS stwierdzające całkowite lub częściowe inwalidztwo", "Dokumentacja medyczna z przebiegu leczenia", "Kopia dokumentu tożsamości osoby uprawnionej", "Zwolnienie lekarskie"]
+  },
+  "NIEZDOLNOŚĆ": {
+    "NIEZDOLNOŚĆ DO PRACY TRWAŁA CAŁKOWITA": ["Dokument o przyznaniu renty lub orzeczenie lekarza/ZUS stwierdzające niezdolność do pracy", "Pełna dokumentacja medyczna określająca powód powstania niezdolności do pracy", "Kopia dokumentu tożsamości osoby uprawnionej", "Zwolnienie lekarskie"],
+    "NIEZDOLNOŚĆ DO PRACY OKRESOWA CZASOWA": ["Dokument o przyznaniu renty lub orzeczenie lekarza/ZUS stwierdzające niezdolność do pracy", "Pełna dokumentacja medyczna określająca powód powstania niezdolności do pracy", "Kopia dokumentu tożsamości osoby uprawnionej", "Zwolnienie lekarskie"],
+    "NIEZDOLNOŚĆ DO PRACY W ZAWODZIE KIEROWCY LUB NAUCZYCIELA": ["Dokument o przyznaniu renty lub orzeczenie lekarza/ZUS stwierdzające niezdolność do pracy", "Orzeczenie lekarza stwierdzającego konieczność powstrzymania się Ubezpieczonego od pracy w celu przeprowadzenia zaleconego leczenia (odbycia urlopu dla poratowania zdrowia), wraz z dokumentacją medyczną, która była podstawą do wydania tego orzeczenia", "Dokumentacja medyczna potwierdzająca przyczynę niezdolności do pracy", "Kopia dokumentu tożsamości osoby uprawnionej", "Zwolnienie lekarskie"],
+    "NIEZDOLNOŚĆ DO SAMODZIELNEJ EGZYSTENCJI": ["Dokument o przyznaniu renty lub orzeczenie lekarza/ZUS stwierdzające niezdolność do samodzielnej egzystencji", "Dokumentacja medyczna potwierdzająca niezdolność do samodzielnej egzystencji", "Kopia dokumentu tożsamości osoby uprawnionej", "Zwolnienie lekarskie"]
+  },
+  "ZDARZENIA ZDROWOTNE": {
+    "POBYT W SZPITALU": ["Dokumentacja medyczna, potwierdzająca: pobyt w szpitalu; na OIOM/OIOK/OIT; oddziale rehabilitacyjnym/w sanatorium (Szpitalu Uzdrowiskowym); okres pobytu oraz jego przyczynę; wykonaną operację; powikłania operacji; leczenie specjalistyczne; zwolnienie lekarskie; skierowanie do sanatorium (jeśli zdarzenie występuje w polisie)", "Kopia dokumentu tożsamości osoby uprawnionej", "Zwolnienia lekarskie wydane przez szpital (jeśli zdarzenie występuje w polisie)", "Zatwierdzone przez uprawniony organ i wystawione przez uprawnionego lekarza skierowanie do sanatorium oraz dokument potwierdzający pobyt (karta informacyjna, zaświadczenie) wystawiony przez sanatorium – dla zdarzenia pobytu w sanatorium (jeśli zdarzenie występuje w polisie)"],
+    "OPERACJA": ["Dokumentacja medyczna, potwierdzająca: pobyt w szpitalu; na OIOM/OIOK/OIT; oddziale rehabilitacyjnym/w sanatorium (Szpitalu Uzdrowiskowym); okres pobytu oraz jego przyczynę; wykonaną operację; powikłania operacji; leczenie specjalistyczne; zwolnienie lekarskie; skierowanie do sanatorium (jeśli zdarzenie występuje w polisie)", "Kopia dokumentu tożsamości osoby uprawnionej", "Zwolnienia lekarskie wydane przez szpital (jeśli zdarzenie występuje w polisie)", "Zatwierdzone przez uprawniony organ i wystawione przez uprawnionego lekarza skierowanie do sanatorium oraz dokument potwierdzający pobyt (karta informacyjna, zaświadczenie) wystawiony przez sanatorium – dla zdarzenia pobytu w sanatorium (jeśli zdarzenie występuje w polisie)"],
+    "LECZENIE SPECJALISTYCZNE": ["Dokumentacja medyczna, potwierdzająca: pobyt w szpitalu; na OIOM/OIOK/OIT; oddziale rehabilitacyjnym/w sanatorium (Szpitalu Uzdrowiskowym); okres pobytu oraz jego przyczynę; wykonaną operację; powikłania operacji; leczenie specjalistyczne; zwolnienie lekarskie; skierowanie do sanatorium (jeśli zdarzenie występuje w polisie)", "Kopia dokumentu tożsamości osoby uprawnionej", "Zwolnienia lekarskie wydane przez szpital (jeśli zdarzenie występuje w polisie)", "Zatwierdzone przez uprawniony organ i wystawione przez uprawnionego lekarza skierowanie do sanatorium oraz dokument potwierdzający pobyt (karta informacyjna, zaświadczenie) wystawiony przez sanatorium – dla zdarzenia pobytu w sanatorium (jeśli zdarzenie występuje w polisie)"],
+    "LECZENIE SPECJALISTYCZNE ONKOLOGICZNE": ["Dokumentacja medyczna, potwierdzająca: pobyt w szpitalu; na OIOM/OIOK/OIT; oddziale rehabilitacyjnym/w sanatorium (Szpitalu Uzdrowiskowym); okres pobytu oraz jego przyczynę; wykonaną operację; powikłania operacji; leczenie specjalistyczne; zwolnienie lekarskie; skierowanie do sanatorium (jeśli zdarzenie występuje w polisie)", "Kopia dokumentu tożsamości osoby uprawnionej", "Zwolnienia lekarskie wydane przez szpital (jeśli zdarzenie występuje w polisie)", "Zatwierdzone przez uprawniony organ i wystawione przez uprawnionego lekarza skierowanie do sanatorium oraz dokument potwierdzający pobyt (karta informacyjna, zaświadczenie) wystawiony przez sanatorium – dla zdarzenia pobytu w sanatorium (jeśli zdarzenie występuje w polisie)"],
+    "LECZENIE SPECJALISTYCZNE KARDIOLOGICZNE": ["Dokumentacja medyczna, potwierdzająca: pobyt w szpitalu; na OIOM/OIOK/OIT; oddziale rehabilitacyjnym/w sanatorium (Szpitalu Uzdrowiskowym); okres pobytu oraz jego przyczynę; wykonaną operację; powikłania operacji; leczenie specjalistyczne; zwolnienie lekarskie; skierowanie do sanatorium (jeśli zdarzenie występuje w polisie)", "Kopia dokumentu tożsamości osoby uprawnionej", "Zwolnienia lekarskie wydane przez szpital (jeśli zdarzenie występuje w polisie)", "Zatwierdzone przez uprawniony organ i wystawione przez uprawnionego lekarza skierowanie do sanatorium oraz dokument potwierdzający pobyt (karta informacyjna, zaświadczenie) wystawiony przez sanatorium – dla zdarzenia pobytu w sanatorium (jeśli zdarzenie występuje w polisie)"],
+    "ŚWIADCZENIE REHABILITACYJNE": ["Dokumentacja medyczna, potwierdzająca: pobyt w szpitalu; na OIOM/OIOK/OIT; oddziale rehabilitacyjnym/w sanatorium (Szpitalu Uzdrowiskowym); okres pobytu oraz jego przyczynę; wykonaną operację; powikłania operacji; leczenie specjalistyczne; zwolnienie lekarskie; skierowanie do sanatorium (jeśli zdarzenie występuje w polisie)", "Kopia dokumentu tożsamości osoby uprawnionej", "Zwolnienia lekarskie wydane przez szpital (jeśli zdarzenie występuje w polisie)", "Zatwierdzone przez uprawniony organ i wystawione przez uprawnionego lekarza skierowanie do sanatorium oraz dokument potwierdzający pobyt (karta informacyjna, zaświadczenie) wystawiony przez sanatorium – dla zdarzenia pobytu w sanatorium (jeśli zdarzenie występuje w polisie)"]
+  },
+  "WYKUP LUB DOŻYCIE": {
+    "WYKUP UBEZPIECZENIA CAŁKOWITY": [
+      "Wypełniony i podpisany Wniosek o wykup i dożycie",
+      "Kopia dokumentu tożsamości osoby uprawnionej"
+    ],
+    "WYKUP UBEZPIECZENIA CZĘŚCIOWY": [
+      "Wypełniony i podpisany Wniosek o wykup i dożycie",
+      "Kopia dokumentu tożsamości osoby uprawnionej"
+    ],
+    "DOŻYCIE DO KOŃCA OKRESU UBEZPIECZENIA": [
+      "Wypełniony i podpisany Wniosek o wykup i dożycie",
+      "Kopia dokumentu tożsamości osoby uprawnionej"
+    ]
+  },
+
+  "ZDARZENIA WYPADKOWE": {
+    "TRWAŁY USZCZERBEK NA ZDROWIU WSKUTEK NIESZCZĘŚLIWEGO WYPADKU": [
+      "Dokument z udzielenia pierwszej pomocy lekarskiej zaraz po wypadku z rozpoznaniem urazu (np. karta informacyjna z pogotowia ratunkowego, dokumentacja medyczna z SOR, szpitala lub przychodni)",
+      "Kopia dokumentu tożsamości osoby uprawnionej",
+      "Dokumentacja medyczna z przebiegu leczenia",
+      "Protokół policji, prokuratury, protokół wypadku przy pracy (BHP lub w przypadku rolników protokół powypadkowy sporządzony przez KRUS) lub informacja gdzie prowadzone było postępowanie",
+      "Jeśli wypadek powstał w trakcie prowadzenia pojazdu przez poszkodowanego, prosimy o przesłanie prawa jazdy",
+      "Jeśli do wypadku doszło z powodu niesprawności pojazdu, prosimy o dokument dopuszczający pojazd do ruchu np. dowód rejestracyjny pojazdu z wpisem badania technicznego"
+    ],
+    "LECZENIE SZPITALNE W ZWIĄZKU Z NIESZCZĘŚLIWYM WYPADKIEM": [
+      "Dokument z udzielenia pierwszej pomocy lekarskiej zaraz po wypadku z rozpoznaniem urazu",
+      "Kopia dokumentu tożsamości osoby uprawnionej",
+      "Dokumentacja medyczna z przebiegu leczenia",
+      "Protokół policji, prokuratury, protokół wypadku przy pracy lub informacja, gdzie prowadzone było postępowanie",
+      "Jeśli wypadek powstał w trakcie prowadzenia pojazdu przez poszkodowanego, prosimy o przesłanie prawa jazdy",
+      "Jeśli do wypadku doszło z powodu niesprawności pojazdu, prosimy o dokument dopuszczający pojazd do ruchu"
+    ],
+    "ZDARZENIA ZWIĄZANE Z WYPADKIEM PRZY PRACY": [
+      "Dokument z udzielenia pierwszej pomocy lekarskiej",
+      "Kopia dokumentu tożsamości osoby uprawnionej",
+      "Dokumentacja medyczna z przebiegu leczenia",
+      "Protokół BHP, protokół powypadkowy lub informacja, gdzie prowadzone było postępowanie",
+      "Jeśli wypadek powstał w trakcie prowadzenia pojazdu – prawo jazdy",
+      "Jeśli do wypadku doszło z powodu niesprawności pojazdu – dokument dopuszczający pojazd do ruchu"
+    ],
+    "ZDARZENIA ZWIĄZANE Z WYPADKIEM W TRAKCIE PROWADZENIA POJAZDU": [
+      "Dokument z udzielenia pierwszej pomocy lekarskiej",
+      "Kopia dokumentu tożsamości osoby uprawnionej",
+      "Dokumentacja medyczna z przebiegu leczenia",
+      "Protokół policji, protokół wypadku przy pracy lub informacja, gdzie prowadzone było postępowanie",
+      "Prawo jazdy w przypadku wypadku podczas prowadzenia pojazdu",
+      "Dokument dopuszczający pojazd do ruchu, jeśli wypadek spowodowany był niesprawnością pojazdu"
+    ]
+  },
+
+  "ZDARZENIA DOTYCZĄCE CZŁONKA RODZINY": {
+    "ZDARZENIA ZWIĄZANE Z MAŁŻONKIEM": [
+      "Dokument z udzielenia pierwszej pomocy lekarskiej z rozpoznaniem urazu",
+      "Kopia dokumentu tożsamości osoby uprawnionej",
+      "Dokumentacja medyczna z przebiegu leczenia",
+      "Protokół policji/prokuratury/protokół wypadku przy pracy lub informacja, gdzie prowadzone było postępowanie",
+      "Jeśli wypadek podczas prowadzenia pojazdu – prawo jazdy",
+      "Jeśli wypadek spowodowany niesprawnością pojazdu – dokument dopuszczający pojazd do ruchu",
+      "Dokumenty wskazujące pokrewieństwo: akt małżeństwa, akt urodzenia partnera, akt urodzenia dziecka"
+    ],
+    "ZDARZENIA ZWIĄZANE Z PARTNEREM": [
+      "Dokument z udzielenia pierwszej pomocy lekarskiej z rozpoznaniem urazu",
+      "Kopia dokumentu tożsamości osoby uprawnionej",
+      "Dokumentacja medyczna z przebiegu leczenia",
+      "Protokół policji/prokuratury/protokół wypadku przy pracy lub informacja, gdzie prowadzone było postępowanie",
+      "Prawo jazdy, jeśli wypadek podczas prowadzenia pojazdu",
+      "Dokument dopuszczający pojazd do ruchu, jeśli wypadek spowodowany był niesprawnością pojazdu",
+      "Dokumenty wskazujące pokrewieństwo: akt małżeństwa, akt urodzenia partnera, akt urodzenia dziecka"
+    ],
+    "ZDARZENIA ZWIĄZANE Z DZIECKIEM": [
+      "Dokument z udzielenia pierwszej pomocy lekarskiej z rozpoznaniem urazu",
+      "Kopia dokumentu tożsamości osoby uprawnionej",
+      "Dokumentacja medyczna z przebiegu leczenia",
+      "Protokół policji/prokuratury/protokół wypadku przy pracy lub informacja, gdzie prowadzone było postępowanie",
+      "Prawo jazdy, jeśli wypadek podczas prowadzenia pojazdu",
+      "Dokument dopuszczający pojazd do ruchu, jeśli wypadek spowodowany był niesprawnością pojazdu",
+      "Dokumenty wskazujące pokrewieństwo: akt małżeństwa, akt urodzenia partnera, akt urodzenia dziecka"
+    ]
+  },
+
+  "ZDARZENIE W OKRESIE KARENCJI": {
+    "ZDARZENIA W OKRESIE KARENCJI": [
+      "Zaświadczenie o poprzednim ubezpieczeniu, wystawione przez poprzedniego ubezpieczającego lub poprzedniego ubezpieczyciela – w przypadku ubezpieczeń grupowych lub indywidualnych. Nie może być wystawione przez ubezpieczonego lub agenta.",
+      "Dokumentacja polisowa dotycząca poprzedniego ubezpieczenia (np. polisa, certyfikat) – nie może to być oferta lub propozycja warunków ubezpieczenia",
+      "Zaświadczenie lub dokumentacja polisowa powinny zawierać: okres ubezpieczenia, datę wystąpienia z poprzedniego ubezpieczenia/rozwiązania umowy, nazwę poprzedniego ubezpieczyciela i ubezpieczającego, dane osoby ubezpieczonej, wskazane ryzyko ubezpieczeniowe, kwotę należną za zgłoszone świadczenie z poprzedniej umowy"
+    ]
+  }
+
+};
+
+const mainCategory = document.getElementById('mainCategory');
+const subCategory = document.getElementById('subCategory');
+const subCategoryLabel = document.getElementById('subCategoryLabel');
+const documentsContainer = document.getElementById('documentsContainer');
+const documentsList = document.getElementById('documentsList');
+
+Object.keys(data).forEach(cat => {
+    const option = document.createElement('option');
+    option.value = cat;
+    option.textContent = cat;
+    mainCategory.appendChild(option);
+});
+
+mainCategory.addEventListener('change', () => {
+    const selectedMain = mainCategory.value;
+    subCategory.classList.add('hidden');
+    subCategoryLabel.classList.add('hidden');
+    documentsContainer.classList.add('hidden');
+    documentsList.innerHTML = '';
+
+    if (!selectedMain) return;
+
+    const subCats = Object.keys(data[selectedMain]);
+    if (subCats.length > 0) {
+        subCategory.innerHTML = '<option value="">-- Wybierz podkategorię --</option>';
+        subCats.forEach(sub => {
+            const option = document.createElement('option');
+            option.value = sub;
+            option.textContent = sub;
+            subCategory.appendChild(option);
+        });
+        subCategory.classList.remove('hidden');
+        subCategoryLabel.classList.remove('hidden');
+    }
+});
+
+subCategory.addEventListener('change', () => {
+    const selectedMain = mainCategory.value;
+    const selectedSub = subCategory.value;
+    documentsList.innerHTML = '';
+    documentsContainer.classList.add('hidden');
+
+    if (!selectedSub) return;
+
+    const docs = data[selectedMain][selectedSub];
+    docs.forEach(doc => {
+        const li = document.createElement('li');
+        li.textContent = doc;
+        documentsList.appendChild(li);
+    });
+
+    documentsContainer.classList.remove('hidden');
+});
+</script>
+
+</body>
+</html>
