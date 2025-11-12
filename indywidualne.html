@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CloudPatch - TUnŻ Indywidualne</title>
+  <style>
+    :root {
+      --bg: #f3f9ff;
+      --primary: #0a2540;
+      --secondary: #2d5c8a;
+      --accent: #e5effa;
+      --white: #ffffff;
+      --shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background: var(--bg);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: var(--primary);
+    }
+    h1 {
+      font-size: 2.4rem;
+      margin-top: 2rem;
+      font-weight: 700;
+      text-align: center;
+    }
+    .nav-switch {
+      display: flex;
+      background: linear-gradient(to right, #264d73, #0a2540);
+      border-radius: 50px;
+      padding: 0.4rem;
+      box-shadow: var(--shadow);
+      margin-top: 2rem;
+      overflow: hidden;
+    }
+    .nav-switch a {
+      text-decoration: none;
+      color: #fff;
+      font-size: 1.1rem;
+      font-weight: 600;
+      padding: 0.8rem 2rem;
+      border-radius: 40px;
+      transition: all 0.3s;
+      white-space: nowrap;
+    }
+    .nav-switch a.active {
+      background: #2d5c8a;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+    .tools-section {
+      margin-top: 3rem;
+      font-size: 1rem;
+      color: #395b7d;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>CloudPatch Tools</h1>
+
+  <div class="nav-switch">
+    <a href="grupowe.html">TUnŻ Grupowe</a>
+    <a href="indywidualne.html" class="active">TUnŻ Indywidualne</a>
+    <a href="narzedzia.html">Narzędzia</a>
+  </div>
+
+  <div class="tools-section">
+    Brak narzędzi w tej kategorii
+  </div>
+
+</body>
+</html>
