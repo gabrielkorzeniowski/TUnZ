@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <title>Generator Wiadomości</title>
+  <link rel="icon" type="image/png" href="sms.png">
+  <style>
+    :root {
+      --bg: #f3f9ff;
+      --primary: #0a2540;
+      --secondary: #2d5c8a;
+      --white: #ffffff;
+      --shadow: 0 8px 20px rgba(0,0,0,0.1);
+      --gradient: linear-gradient(to right, #2d5c8a, #0a2540);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background: var(--bg);
+      margin: 0;
+      padding: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      color: var(--primary);
+    }
+
+    .container {
+      background: var(--white);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: var(--shadow);
+      max-width: 600px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    h2, h3 {
+      text-align: center;
+      margin: 0;
+      font-weight: 700;
+    }
+
+    label {
+      font-weight: 600;
+      margin-top: 10px;
+      display: block;
+    }
+
+    select, input, textarea {
+      width: 100%;
+      padding: 10px 12px;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-family: inherit;
+      margin-top: 5px;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 15px;
+    }
+
+    button {
+      background: var(--gradient);
+      color: var(--white);
+      border: none;
+      padding: 12px 18px;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: none; /* brak hover efektu */
+    }
+
+    #output {
+      background: #fafafa;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 15px;
+      min-height: 100px;
+      white-space: pre-wrap;
+      font-family: monospace;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>Generator Wiadomości</h2>
+
+    <label for="template">Wybierz szablon:</label>
+    <select id="template">
+      <option value="5">Seria i nr polis</option>
+      <option value="1">Numer konta do wpłat</option>
+      <option value="2">Saldo</option>
+      <option value="3">Numer wniosku świadczeniowego</option>
+      <option value="4">Numer zgłoszenia ZG</option>
+      <option value="6">Sumy ubezpieczenia dla poszczególnych ryzyk występujących na polisie</option>
+    </select>
+
+    <label for="data">Wprowadź dane (np. numer zgłoszenia, numer polisy, suma ubezpieczenia):</label>
+    <textarea id="data"></textarea>
+
+    <div class="buttons">
+      <button onclick="generateMessage()">Generuj wiadomość</button>
+      <button onclick="copyMessage()">Kopiuj wiadomość</button>
+    </div>
+
+    <h3>Wygenerowana wiadomość:</h3>
+    <div id="output"></div>
+  </div>
+
+  <script>
+    const templates = {
+      1: "Dzień dobry.\n\nW nawiązaniu do naszej rozmowy telefonicznej przesyłam numer konta do wpłat:\n\n{data}",
+      2: "Dzień dobry.\n\nW nawiązaniu do naszej rozmowy telefonicznej przesyłam saldo polisy:\n\n{data}",
+      3: "Dzień dobry.\n\nW nawiązaniu do naszej rozmowy telefonicznej przesyłam numer wniosku świadczeniowego:\n\n{data}",
+      4: "Dzień dobry.\n\nW nawiązaniu do naszej rozmowy telefonicznej przesyłam numer zgłoszenia:\n\n{data}",
+      5: "Dzień dobry.\n\nW nawiązaniu do naszej rozmowy telefonicznej przesyłam serię i numer polisy:\n\n{data}",
+      6: "Dzień dobry.\n\nW nawiązaniu do naszej rozmowy telefonicznej przesyłam sumę ubezpieczenia dla poszczególnych ryzyk występujących na polisie:\n\n{data}"
+    };
+
+    function generateMessage() {
+      const selectedTemplate = document.getElementById("template").value;
+      const inputData = document.getElementById("data").value.trim();
+      if (!inputData) return alert("Proszę wprowadzić dane.");
+      const template = templates[selectedTemplate];
+      const message = template.replace("{data}", inputData);
+      document.getElementById("output").innerText = message;
+    }
+
+    function copyMessage() {
+      const output = document.getElementById("output").innerText;
+      if (!output) return alert("Brak wiadomości do skopiowania.");
+      navigator.clipboard.writeText(output).catch(() => alert("Nie udało się skopiować wiadomości."));
+    }
+  </script>
+
+</body>
+</html>
