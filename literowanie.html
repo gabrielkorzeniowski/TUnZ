@@ -82,6 +82,11 @@
   </style>
 </head>
 <body>
+  <script>
+  if (sessionStorage.getItem("loggedIn") !== "true") {
+    window.location.href = "login.html";
+  }
+</script>
 
   <div class="container">
     <h2>Literowanie e-maila po polsku</h2>
