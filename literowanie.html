@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <title>Literowanie e-maila</title>
+  <link rel="icon" type="image/png" href="telefon.png">
+  <style>
+    :root {
+      --bg: #f3f9ff;
+      --primary: #0a2540;
+      --secondary: #2d5c8a;
+      --white: #ffffff;
+      --shadow: 0 8px 20px rgba(0,0,0,0.1);
+      --gradient: linear-gradient(to right, #2d5c8a, #0a2540);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background: var(--bg);
+      margin: 0;
+      padding: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      color: var(--primary);
+    }
+
+    .container {
+      background: var(--white);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: var(--shadow);
+      max-width: 600px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    h2 {
+      text-align: center;
+      margin: 0;
+      font-size: 1.8rem;
+      font-weight: 700;
+    }
+
+    input {
+      padding: 10px 12px;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      width: 100%;
+      font-family: inherit;
+    }
+
+    button {
+      background: var(--gradient);
+      color: var(--white);
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      font-weight: 600;
+      transition: 0.2s;
+    }
+
+    .result {
+      font-size: 1rem;
+      line-height: 1.6;
+      white-space: pre-line;
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      background: #fafafa;
+      min-height: 200px;
+      overflow-y: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>Literowanie e-maila po polsku</h2>
+
+    <input type="email" id="emailInput" placeholder="Wpisz swój adres e-mail" />
+
+    <button onclick="literujEmail()">Literuj</button>
+
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    const alfabetFonetyczny = {
+      a: "Adam", b: "Barbara", c: "Celina", d: "Dorota", e: "Ewa",
+      f: "Franciszek", g: "Grażyna", h: "Halina", i: "Irena", j: "Jadwiga",
+      k: "Karol", l: "Ludwik", m: "Maria", n: "Natalia", o: "Olga",
+      p: "Paweł", q: "Quebec", r: "Roman", s: "Stefan", t: "Tadeusz",
+      u: "Urszula", v: "Volvo", w: "Wanda", x: "Xero", y: "Ygrek",
+      z: "Zofia", "ą": "Ącki", "ć": "Ćwikła", "ę": "Ęcki", "ł": "Łukasz",
+      "ń": "Ńina", "ó": "Órszulka", "ś": "Śnieżka", "ź": "Źrebak", "ż": "Żaneta",
+      "0": "zero", "1": "jeden", "2": "dwa", "3": "trzy", "4": "cztery",
+      "5": "pięć", "6": "sześć", "7": "siedem", "8": "osiem", "9": "dziewięć",
+      ".": "kropka", "@": "małpa", "-": "myślnik", "_": "podkreślnik"
+    };
+
+    function literujEmail() {
+      const email = document.getElementById("emailInput").value.trim().toLowerCase();
+      const resultDiv = document.getElementById("result");
+      let wynik = "";
+
+      if (!email) {
+        resultDiv.innerText = "Proszę wpisać poprawny adres e-mail.";
+        return;
+      }
+
+      for (let znak of email) {
+        if (alfabetFonetyczny[znak]) {
+          wynik += `${znak.toUpperCase()} – ${alfabetFonetyczny[znak]}\n`;
+        } else {
+          wynik += `${znak.toUpperCase()} – (brak litery)\n`;
+        }
+      }
+
+      resultDiv.innerText = wynik;
+    }
+  </script>
+
+</body>
+</html>
